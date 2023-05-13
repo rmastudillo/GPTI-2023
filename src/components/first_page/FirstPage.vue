@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { useTestStore } from "@/stores/testStore";
 import { ref } from "vue";
+import { Modal, Toast } from "bootstrap";
+import { onMounted, onUnmounted, reactive } from "vue";
 
 const testStore = useTestStore();
 const modifica = () => {
@@ -9,8 +11,6 @@ const modifica = () => {
   console.log(testStore.getTest);
 };
 
-import { Modal, Toast } from "bootstrap";
-import { onMounted, onUnmounted, reactive } from "vue";
 
 defineProps({
   msg: String,
