@@ -5,9 +5,10 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import { createApp } from "vue";
 
 import "@/assets/styles/tailwind.css";
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/js/bootstrap.js"
 
 const app = createApp(App);
-
 
 // USE PINIA
 const pinia = createPinia();

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useTestStore } from "@/stores/testStore";
+import HelloWorld from "../HelloWorld.vue";
 import { ref } from "vue";
 
 const testStore = useTestStore();
@@ -31,6 +32,19 @@ const variableee = ref("");
   <br>
   <button class="estaesunaclase" :onclick="modifica">Click</button>
   <router-link class="estaesunaclase" :to="{ name: 'home' }"> home </router-link>
+  <div class="home">
+    <HelloWorld msg="Install Vue 3 with Bootstrap 5" />
+    <button type="button" class="btn btn-primary">Primary</button>
+    <button type="button" class="btn btn-secondary">Secondary</button>
+    <button type="button" class="btn btn-success">Success</button>
+    <button type="button" class="btn btn-danger">Danger</button>
+    <button type="button" class="btn btn-warning">Warning</button>
+    <button type="button" class="btn btn-info">Info</button>
+    <button type="button" class="btn btn-light">Light</button>
+    <button type="button" class="btn btn-dark">Dark</button>
+
+    <button type="button" class="btn btn-link">Link</button>
+  </div>
 </template>
 <style scoped>
 .estaesunaclase {
