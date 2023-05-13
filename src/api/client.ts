@@ -1,4 +1,4 @@
-import { API_HOST } from "@/constants";
+import { API_HOST } from "@/utils/constants";
 import axios, {
   AxiosRequestTransformer,
   AxiosResponseTransformer
