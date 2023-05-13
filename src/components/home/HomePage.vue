@@ -1,15 +1,12 @@
 <script lang="ts" setup>
-import HelloWorld from '../HelloWorld.vue';
 </script>
 <template>
   <div class="bg-gray-100 min-h-screen p-10">
-
-    <router-link class="estasotraclase m-3 p-3" :to="{ name: 'test' }">
+    <router-link class="estasotraclase m-3 p-3" :to="{ name: 'Test' }">
       test
     </router-link>
   </div>
   <div class="home">
-    <HelloWorld msg="Install Vue 3 with Bootstrap 5" />
     <button type="button" class="btn btn-primary">Primary</button>
     <button type="button" class="btn btn-secondary">Secondary</button>
     <button type="button" class="btn btn-success">Success</button>
