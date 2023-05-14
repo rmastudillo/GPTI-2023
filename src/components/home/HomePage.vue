@@ -1,4 +1,16 @@
 <script lang="ts" setup>
+import { getProducts } from "@/api/modules/default";
+import { ref, onMounted } from "vue";
+
+const products = ref([]);
+const getProduct = async () => {
+  const response = await getProducts();
+  products.value = response.data;
+};
+
+onMounted(() => {
+  getProduct();
+});
 </script>
 <template>
   <div class="bg-gray-100 min-h-screen p-10">
@@ -6,6 +18,7 @@
       test
     </router-link>
   </div>
+  {{ products }}
   <div class="home">
     <button type="button" class="btn btn-primary">Primary</button>
     <button type="button" class="btn btn-secondary">Secondary</button>
