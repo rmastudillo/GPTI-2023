@@ -4,7 +4,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [vue()],
-  base: "/GPTI-2023/",
+  base: "./",
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
