@@ -37,6 +37,9 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
+        env:
+          VITE_API_HOST_URL: ${{ secrets.VITE_API_HOST_URL }}
+          VITE_REPO_NAME: ${{ secrets.VITE_REPO_NAME }}
       - name: Build
         run: yarn build
       - name: Setup Pages
