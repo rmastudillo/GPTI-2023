@@ -6,7 +6,7 @@ const env = loadEnv(process.cwd(), "");
 
 export default defineConfig({
   plugins: [vue()],
-  base: env.VITE_REPO_NAME ?? "./",
+  base: env.VITE_REPO_NAME ?? "/GPTI-2023/",
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
