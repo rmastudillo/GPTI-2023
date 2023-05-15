@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <nav class="navbar navbar-expand-lg mb-4 border-bottom">
+      estoy probando el deploy
       <router-link :to="routes[0].path" class="navbar-brand d-flex align-items-center text-decoration-none">
         <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 261.76 226.69">
           <path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883" />
