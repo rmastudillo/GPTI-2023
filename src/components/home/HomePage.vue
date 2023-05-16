@@ -13,25 +13,26 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="bg-gray-100 min-h-screen p-10">
-    <router-link class="estasotraclase m-3 p-3" :to="{ name: 'Test' }">
-      test
-    </router-link>
-  </div>
-  {{ products }}
-  <div class="home">
-    <button type="button" class="btn btn-primary">Primary</button>
-    <button type="button" class="btn btn-secondary">Secondary</button>
-    <button type="button" class="btn btn-success">Success</button>
-    <button type="button" class="btn btn-danger">Danger</button>
-    <button type="button" class="btn btn-warning">Warning</button>
-    <button type="button" class="btn btn-info">Info</button>
-    <button type="button" class="btn btn-light">Light</button>
-    <button type="button" class="btn btn-dark">Dark</button>
-
-    <button type="button" class="btn btn-link">Link</button>
+  <h1>Ejemplo Scrapper Productos Jumbo (Categoria Carne)</h1>
+  <br>
+  <div >
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Precio</th>
+        </tr>
+      </thead>
+      <tbody v-for="(value, key) in products?? {}">
+        <tr>
+          <td>{{ key }}</td>
+          <td>{{ value }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
+
 <style scoped>
 .estasotraclase {
   border: 4px solid rgb(0, 0, 0);
