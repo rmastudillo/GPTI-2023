@@ -1,22 +1,30 @@
 <script lang="ts" setup>
-import { getProducts } from "@/api/modules/default";
-import { ref, onMounted } from "vue";
+  import { getProducts } from "@/api/modules/default";
+  import { ref, onMounted } from "vue";
 
-const products = ref([]);
-const getProduct = async () => {
-  const response = await getProducts();
-  products.value = response.data;
-};
+  const products = ref([]);
+  const loading = ref(true);
 
-onMounted(() => {
-  getProduct();
-});
+  const getProduct = async () => {
+    const response = await getProducts();
+    products.value = response.data;
+    loading.value = false; 
+    
+  };
+
+  onMounted(() => {
+    getProduct();
+  });
 </script>
 <template>
   <h1>Ejemplo Scrapper Productos Jumbo (Categoria Carne)</h1>
   <br>
   <div >
-    <table class="table">
+    <div class="loading-message" v-if="loading">
+      <div class="spinner-border" role="status"></div>
+      <h3 class="mx-2">Loading...</h3>
+    </div>
+    <table v-else class="table">
       <thead>
         <tr>
           <th scope="col">Nombre</th>
@@ -41,4 +49,16 @@ onMounted(() => {
   font-size: 16px;
   cursor: pointer;
 }
+.loading-message {
+  animation: fade 1s infinite alternate;
+  display: flex;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }}
 </style>
