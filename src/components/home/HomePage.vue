@@ -1,25 +1,30 @@
 <script lang="ts" setup>
-  import { getProducts } from "@/api/modules/default";
-  import { ref, onMounted } from "vue";
+import { getProducts } from "@/api/modules/default";
+import { useCartStore } from "@/stores/cartStore";
+import { onMounted, ref } from "vue";
 
-  const products = ref([]);
-  const loading = ref(true);
+const products = ref([]);
+const loading = ref(true);
+const cartStore = useCartStore();
 
-  const getProduct = async () => {
-    const response = await getProducts();
-    products.value = response.data;
-    loading.value = false; 
-    
-  };
+const getProduct = async () => {
+  const response = await getProducts();
+  products.value = response.data;
+  loading.value = false;
+};
 
-  onMounted(() => {
-    getProduct();
-  });
+onMounted(() => {
+  getProduct();
+});
+
+const addItem = (price: string, name: string) => {
+  cartStore.addItem({ price, name });
+};
 </script>
 <template>
   <h1>Ejemplo Scrapper Productos Jumbo (Categoria Carne)</h1>
-  <br>
-  <div >
+  <br />
+  <div>
     <div class="loading-message" v-if="loading">
       <div class="spinner-border" role="status"></div>
       <h3 class="mx-2">Loading...</h3>
@@ -29,12 +34,22 @@
         <tr>
           <th scope="col">Nombre</th>
           <th scope="col">Precio</th>
+          <th scope="col">Agregar</th>
         </tr>
       </thead>
-      <tbody v-for="(value, key) in products?? {}">
+      <tbody v-for="(price, name) in products ?? {}">
         <tr>
-          <td>{{ key }}</td>
-          <td>{{ value }}</td>
+          <td>{{ name }}</td>
+          <td>{{ price }}</td>
+          <td>
+            <button
+              @click="addItem(price, name.toString())"
+              type="button"
+              class="btn btn-dark"
+            >
+              +
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -60,5 +75,6 @@
   }
   100% {
     opacity: 1;
-  }}
+  }
+}
 </style>
