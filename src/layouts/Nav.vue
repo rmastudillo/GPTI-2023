@@ -1,97 +1,63 @@
 <script lang="ts" setup>
 import { routes } from "@/router";
-import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
+import { QueryParams } from "@/types/common";
+import { categorias, superMarket } from "@/utils/constants";
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { RouteLocationNormalized, useRoute, useRouter } from "vue-router";
 
 const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
 
 const searchValue = ref(route.query.search ?? "");
-const handleSubmit = (e: Event) => {
+const selectedCategory = ref(route.query.categoria ?? "");
+const selectedSubcategory = ref(route.query.subcategoria ?? "");
+const selectedSupermarket = ref(route.query.supermercado ?? "");
+
+const handleSubmit = (e: any) => {
   e.preventDefault();
-  const query = { search: searchValue.value };
-  router.replace({ name: "Products", query });
+  const query: QueryParams = { search: searchValue.value.toString() };
+  if (selectedCategory.value)
+    query.categoria = selectedCategory.value.toString();
+  if (selectedSubcategory.value)
+    query.subcategoria = selectedSubcategory.value.toString();
+  if (selectedSupermarket.value)
+    query.supermercado = selectedSupermarket.value.toString();
+
+  const locationQuery: RouteLocationNormalized["query"] = {};
+
+  for (const [key, value] of Object.entries(query)) {
+    if (value) {
+      locationQuery[key] = value;
+    }
+  }
+  router.replace({ name: "Products", query: locationQuery });
 };
 
-const categorias = [
-  [
-    "despensa",
-    [
-      "arroz-y-legumbres",
-      "pastas-y-salsas",
-      "coctel",
-      "conservas",
-      "aderezos-y-salsas",
-      "reposteria",
-      "harina-y-complementos",
-      "aceites-sal-y-condimentos",
-      "instantaneos-y-sopas",
-      "comidas-etnicas",
-    ],
-  ],
-  [
-    "lacteos",
-    [
-      "leches",
-      "yoghurt",
-      "postres",
-      "mantequillas-y-margarinas",
-      "huevos",
-      "leches-cultivadas-y-bebidas-lacteas",
-      "probioticos-y-defensas",
-    ],
-  ],
-  ["frutas-y-verduras", ["frutas", "verduras", "frutos-secos-y-semillas"]],
-  ["carniceria", ["vacuno", "cerdo", "pollo", "pavo", "cordero"]],
-  [
-    "botilleria",
-    [
-      "bebidas-gaseosas",
-      "aguas-minerales",
-      "jugos",
-      "bebidas-energeticas",
-      "bebidas-isotonicas",
-    ],
-  ],
-  [
-    "limpieza",
-    [
-      "papeles-hogar",
-      "limpieza-de-ropa",
-      "bano-y-cocina",
-      "pisos-y-muebles",
-      "aerosoles-y-desinfectantes",
-      "accesorios-de-limpieza",
-    ],
-  ],
-  ["mascotas", ["perros", "gatos", "otras-mascotas"]],
-  [
-    "supermercado",
-    [
-      "bebe",
-      "congelados",
-      "desayuno-y-dulces",
-      "belleza-y-cuidado-personal",
-      "vinos-cervezas-y-licores",
-      "quesos-y-fiambres",
-      "panaderia-y-pasteleria",
-      "pescaderia",
-      "comidas-preparadas",
-      "sabores-del-mundo",
-      "mundo-bio-natura",
-      "hogar",
-      "electro-y-tecno",
-      "deportes",
-      "jugueteria",
-      "escolares-y-libreria",
-      "farmacia",
-      "automovil-ferreteria-y-jardin",
-    ],
-  ],
-];
+const clearFilters = () => {
+  searchValue.value = "";
+  selectedCategory.value = "";
+  selectedSubcategory.value = "";
+  selectedSupermarket.value = "";
+  handleSubmit(new Event("submit"));
+};
+
+const selectCategory = (category: string) => {
+  selectedCategory.value = category;
+  selectedSubcategory.value = "";
+  handleSubmit(new Event("submit"));
+};
+
+const selectSubcategory = (subcategory: string) => {
+  selectedSubcategory.value = subcategory;
+  handleSubmit(new Event("submit"));
+};
+
+const selectSupermarket = (superMarket: string) => {
+  selectedSupermarket.value = superMarket;
+  handleSubmit(new Event("submit"));
+};
 </script>
 
 <template>
@@ -110,49 +76,11 @@ const categorias = [
             <strong>Scrapper</strong>
           </div>
         </router-link>
-
-        <div class="dropdown">
-          <button
-            class="btn btn-secondary dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton1"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Categorias
-          </button>
-
-          <div
-            class="dropdown-menu w-max"
-            aria-labelledby="dropdownMenuButton1"
-          >
-            <div class="container">
-              <div class="row my-4">
-                <div
-                  v-for="categoria in categorias"
-                  class="col-md-6 col-lg-3 mb-3 mb-lg-0"
-                >
-                  <div class="list-group list-group-flush">
-                    <p
-                      class="mb-0 list-group-item text-uppercase font-weight-bold"
-                    >
-                      {{ categoria[0] }}
-                    </p>
-
-                    <a
-                      v-for="subcategoria in categoria[1]"
-                      href=""
-                      class="list-group-item list-group-item-action"
-                      >{{ subcategoria }}</a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-      <div class="container-fluid">
+
+      <div
+        class="container-fluid flex flex-col align-self-end justify-start align-items-start"
+      >
         <form @submit="handleSubmit" class="d-flex">
           <input
             class="form-control me-2"
@@ -161,15 +89,140 @@ const categorias = [
             placeholder="Search"
             aria-label="Search"
           />
-          <router-link
-            :to="{ name: 'Products', query: { search: searchValue } }"
-            class="btn btn-outline-primary"
-            type="submit"
-            replace
-          >
+          <button class="btn btn-outline-primary mr-2" type="submit">
             Search
-          </router-link>
+          </button>
+          <button
+            class="btn btn-outline-secondary inline-flex align-items-center w-[15rem]"
+            type="button"
+            @click="clearFilters"
+          >
+            Limpiar filtros
+          </button>
         </form>
+        <div class="flex flex-nowrap flex-row gap-2 mt-3">
+          <div class="dropdown">
+            <button
+              class="btn btn-secondary dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton1"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Categorias
+            </button>
+
+            <div
+              class="dropdown-menu w-max"
+              aria-labelledby="dropdownMenuButton1"
+            >
+              <div class="container">
+                <div class="row my-4">
+                  <div
+                    v-for="(subcategorias, categoria) in categorias"
+                    class="col-md-6 col-lg-3 mb-3 mb-lg-0"
+                  >
+                    <div class="list-group list-group-flush">
+                      <p
+                        class="mb-0 list-group-item text-uppercase font-weight-bold"
+                        @click="
+                          (e) => {
+                            selectedCategory = categoria.toString();
+                            selectedSubcategory = '';
+                            handleSubmit(e);
+                          }
+                        "
+                      >
+                        {{ categoria }}
+                      </p>
+
+                      <a
+                        v-for="subcategoria in subcategorias"
+                        :key="subcategoria"
+                        href=""
+                        class="list-group-item list-group-item-action"
+                        @click="
+                          (e) => {
+                            selectedCategory = categoria.toString();
+                            selectedSubcategory = subcategoria;
+                            handleSubmit(e);
+                          }
+                        "
+                      >
+                        {{ subcategoria }}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button
+              class="btn btn-secondary dropdown-toggle"
+              type="button"
+              id="dropdownCategory"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {{ selectedCategory ? selectedCategory : "Categorías" }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownCategory">
+              <li v-for="categoria in Object.keys(categorias)" :key="categoria">
+                <a class="dropdown-item" @click="selectCategory(categoria)">
+                  {{ categoria }}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown" v-if="selectedCategory">
+            <button
+              class="btn btn-secondary dropdown-toggle"
+              type="button"
+              id="dropdownSubcategory"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {{ selectedSubcategory ? selectedSubcategory : "Subcategorías" }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownSubcategory">
+              <li
+                v-for="subcategoria in categorias[selectedCategory.toString()]"
+                :key="subcategoria"
+              >
+                <a
+                  class="dropdown-item"
+                  @click="selectSubcategory(subcategoria)"
+                >
+                  {{ subcategoria }}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown">
+            <button
+              class="btn btn-secondary dropdown-toggle"
+              type="button"
+              id="dropdownSubcategory"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {{ selectedSupermarket ? selectedSupermarket : "Supermercado" }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownSubcategory">
+              <li v-for="supermarket in superMarket" :key="supermarket">
+                <a
+                  class="dropdown-item"
+                  @click="selectSupermarket(supermarket)"
+                >
+                  {{ supermarket }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
       <router-link :to="{ name: 'Cart' }">
         <button type="button" class="btn btn-dark">

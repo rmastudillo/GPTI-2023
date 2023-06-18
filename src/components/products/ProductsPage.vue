@@ -23,10 +23,22 @@ onMounted(() => {
 const addToCart = (item: any) => {
   userStore.addToCart(item);
 };
+
+const paramsToString = (params: any) => {
+  return Object.keys(params)
+    .map((key) => `${params[key]}`)
+    .join("/");
+};
 </script>
 
 <template>
-  <h1>Productos Filtrados</h1>
+  <h1>
+    {{
+      Object.keys(route.query).length
+        ? `Productos Filtrados ` + paramsToString(route.query)
+        : "Todos los Productos"
+    }}
+  </h1>
   <br />
   <div>
     <div class="loading-message" v-if="cartStore.loading">
