@@ -1,4 +1,3 @@
-
 export interface ResponseData {
   [category: string]: subCategory;
 }
@@ -23,3 +22,13 @@ export interface CartItem {
   supermercado: string;
 }
 
+export interface Categorias {
+  [key: string]: string[];
+}
+
+export interface QueryParams {
+  search?: string;
+  categoria?: string;
+  subcategoria?: string;
+  supermercado?: string;
+}
