@@ -1,10 +1,12 @@
-import { getProducts } from "@/api/modules/default";
+import { getFilteredProducts, getProducts } from "@/api/modules/default";
 import { CartItem, ResponseData } from "@/types/common";
 import { defineStore } from "pinia";
 
 interface State {
   items: CartItem[];
   loading: boolean;
+  searchBar: string;
+  filteredItems: CartItem[];
 }
 
 export const useCartStore = defineStore({
@@ -12,6 +14,8 @@ export const useCartStore = defineStore({
   state: (): State => ({
     items: [],
     loading: false,
+    searchBar: "",
+    filteredItems: [],
   }),
   getters: {},
   actions: {
@@ -27,7 +31,7 @@ export const useCartStore = defineStore({
         this.loading = false;
       }
     },
-    loadItems(data: ResponseData, store: CartItem[]) {
+    async loadItems(data: ResponseData, store: CartItem[]) {
       for (const category in data) {
         for (const subCategory in data[category]) {
           for (const product in data[category][subCategory]) {
@@ -42,6 +46,23 @@ export const useCartStore = defineStore({
           }
         }
       }
+    },
+    async getFilteredItems(query: any) {
+      this.filteredItems = [];
+      this.loading = true;
+      try {
+        const response = await getFilteredProducts(query);
+        const data = response.data?.productos_encontrados as CartItem[];
+        this.filteredItems = data;
+        console.log(query);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    setSearchBar(value: string) {
+      this.searchBar = value;
     },
   },
   persist: true,

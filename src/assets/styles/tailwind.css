@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.card img {
+  display: flex;
+  height: 15rem;
+  object-fit: contain;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 18rem;
+}

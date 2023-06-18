@@ -1,21 +1,32 @@
 <script lang="ts" setup>
 import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 import ProductCard from "../shared/ProductCard.vue";
 
+const route = useRoute();
 const cartStore = useCartStore();
 const userStore = useUserStore();
 
+watch(
+  () => route.query,
+  (newId, oldId) => {
+    cartStore.getFilteredItems(route.query);
+  }
+);
+
 onMounted(() => {
-  cartStore.getProducts();
+  cartStore.getFilteredItems(route.query);
 });
+
 const addToCart = (item: any) => {
   userStore.addToCart(item);
 };
 </script>
+
 <template>
-  <h1>Productos</h1>
+  <h1>Productos Filtrados</h1>
   <br />
   <div>
     <div class="loading-message" v-if="cartStore.loading">
@@ -23,42 +34,12 @@ const addToCart = (item: any) => {
       <h3 class="mx-2">Loading...</h3>
     </div>
     <div v-else class="flex flex-wrap gap-5">
-      <div v-for="(item, index) in cartStore.items.slice(0, 50)" class="flex">
+      <div
+        v-for="(item, index) in cartStore.filteredItems.slice(0, 50)"
+        class="flex"
+      >
         <ProductCard :item="item" @addToCart="(item:any) => addToCart(item)" />
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.estasotraclase {
-  border: 4px solid rgb(0, 0, 0);
-  background-color: white;
-  color: rgb(0, 0, 0);
-  font-size: 16px;
-  cursor: pointer;
-}
-.loading-message {
-  animation: fade 1s infinite alternate;
-  display: flex;
-}
-
-@keyframes fade {
-  0% {
-    opacity: 0.4;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-.card img {
-  display: flex;
-  height: 15rem;
-  object-fit: contain;
-}
-.card {
-  display: flex;
-  flex-direction: column;
-  width: 18rem;
-}
-</style>

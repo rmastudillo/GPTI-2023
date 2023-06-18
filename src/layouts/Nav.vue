@@ -1,13 +1,19 @@
 <script lang="ts" setup>
 import { routes } from "@/router";
+import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
 import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const userStore = useUserStore();
+const route = useRoute();
+const router = useRouter();
 
-const searchValue = ref("");
+const searchValue = ref(route.query.search ?? "");
 const handleSubmit = (e: Event) => {
   e.preventDefault();
+  const query = { search: searchValue.value };
+  router.replace({ name: "Products", query });
 };
 
 const categorias = [
@@ -155,7 +161,14 @@ const categorias = [
             placeholder="Search"
             aria-label="Search"
           />
-          <button class="btn btn-outline-primary" type="submit">Search</button>
+          <router-link
+            :to="{ name: 'Products', query: { search: searchValue } }"
+            class="btn btn-outline-primary"
+            type="submit"
+            replace
+          >
+            Search
+          </router-link>
         </form>
       </div>
       <router-link :to="{ name: 'Cart' }">
