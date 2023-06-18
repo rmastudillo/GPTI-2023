@@ -1,10 +1,7 @@
 <script lang="ts" setup>
 import { CartItem } from "@/types/common";
+import { badgeStyle } from "@/utils/constants";
 import formatPrice from "@/utils/formatPrice";
-
-interface BadgeStyle {
-  [key: string]: string;
-}
 
 defineProps({
   item: {
@@ -14,12 +11,6 @@ defineProps({
 });
 
 const emit = defineEmits(["addToCart"]);
-
-const badgeStyle = {
-  jumbo: "bg-lime-500",
-  lider: "bg-blue-500",
-  "santa isabel": "bg-red-500",
-} as BadgeStyle;
 
 const addToCart = (item: any) => {
   // Emitir el evento addToCart con el objeto item como argumento

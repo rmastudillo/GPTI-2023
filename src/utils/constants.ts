@@ -1,4 +1,4 @@
-import { Categorias } from "@/types/common";
+import { BadgeStyle, Categorias } from "@/types/common";
 
 export const API_HOST =
   import.meta.env.VITE_API_HOST_URL ?? "https://gpti-backend.onrender.com";
@@ -67,3 +67,9 @@ export const categorias = {
 } as Categorias;
 
 export const superMarket = ["jumbo", "lider", "santa isabel"];
+
+export const badgeStyle = {
+  jumbo: "bg-lime-500",
+  lider: "bg-blue-500",
+  "santa isabel": "bg-red-500",
+} as BadgeStyle;

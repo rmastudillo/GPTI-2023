@@ -32,3 +32,7 @@ export interface QueryParams {
   subcategoria?: string;
   supermercado?: string;
 }
+
+export interface BadgeStyle {
+  [key: string]: string;
+}
