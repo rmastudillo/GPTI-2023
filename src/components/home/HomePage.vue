@@ -1,58 +1,32 @@
 <script lang="ts" setup>
-import { getProducts } from "@/api/modules/default";
 import { useCartStore } from "@/stores/cartStore";
-import { onMounted, ref } from "vue";
+import { useUserStore } from "@/stores/userStore";
+import { onMounted } from "vue";
+import ProductCard from "../shared/ProductCard.vue";
 
-const products = ref([]);
-const loading = ref(true);
 const cartStore = useCartStore();
-
-const getProduct = async () => {
-  const response = await getProducts();
-  products.value = response.data;
-  loading.value = false;
-};
+const userStore = useUserStore();
 
 onMounted(() => {
-  getProduct();
+  cartStore.getProducts();
 });
-
-const addItem = (price: string, name: string) => {
-  cartStore.addItem({ price, name });
+const addToCart = (item: any) => {
+  userStore.addToCart(item);
 };
 </script>
 <template>
   <h1>Ejemplo Scrapper Productos Jumbo (Categoria Carne)</h1>
   <br />
   <div>
-    <div class="loading-message" v-if="loading">
+    <div class="loading-message" v-if="cartStore.loading">
       <div class="spinner-border" role="status"></div>
       <h3 class="mx-2">Loading...</h3>
     </div>
-    <table v-else class="table">
-      <thead>
-        <tr>
-          <th scope="col">Nombre</th>
-          <th scope="col">Precio</th>
-          <th scope="col">Agregar</th>
-        </tr>
-      </thead>
-      <tbody v-for="(price, name) in products ?? {}">
-        <tr>
-          <td>{{ name }}</td>
-          <td>{{ price }}</td>
-          <td>
-            <button
-              @click="addItem(price, name.toString())"
-              type="button"
-              class="btn btn-dark"
-            >
-              +
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-else class="flex flex-wrap gap-5">
+      <div v-for="(item, index) in cartStore.items.slice(0, 50)" class="flex">
+        <ProductCard :item="item" @addToCart="(item:any) => addToCart(item)" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -76,5 +50,15 @@ const addItem = (price: string, name: string) => {
   100% {
     opacity: 1;
   }
+}
+.card img {
+  display: flex;
+  height: 15rem;
+  object-fit: contain;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 18rem;
 }
 </style>
