@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { defineProps, defineEmits } from "vue";
 import { CartItem } from "@/types/common";
 import formatPrice from "@/utils/formatPrice";
 
