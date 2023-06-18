@@ -21,6 +21,7 @@ export const useCartStore = defineStore({
   actions: {
     async getProducts() {
       this.items = [];
+      this.loading = true;
       try {
         const response = await getProducts();
         const data = response.data as ResponseData;
