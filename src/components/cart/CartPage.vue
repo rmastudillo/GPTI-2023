@@ -1,7 +1,8 @@
 <template>
   <div>
     <h1>Carrito de compra</h1>
-    <p>Presupuesto restante: <span class="budget">${{ remainingBudget.toFixed(2) }}</span></p>
+    <p>Presupuesto restante: <span class="budget">${{ remainingBudget }} / ${{ userStore.budget }}</span></p>
+    <p>Precio total carrito: <span class="budget">${{ totalPrice }}</span></p>
     <br />
     <div>
       <button
@@ -50,6 +51,10 @@ const removeItem = (item: CartItem) => {
 
 const remainingBudget = computed(() => {
   return userStore.budget - userStore.selectedItems.reduce((total, item) => total + item.precio, 0);
+});
+
+const totalPrice = computed(() => {
+  return userStore.selectedItems.reduce((total, item) => total + item.precio, 0);
 });
 </script>
 
