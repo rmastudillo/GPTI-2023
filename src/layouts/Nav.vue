@@ -163,7 +163,7 @@ const categorias = [
           <span
             class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger"
           >
-            {{ userStore.getItemCount }}
+            {{ userStore.getCartItemCount }}
           </span>
           <i class="bi bi-cart"></i>
         </button>

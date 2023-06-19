@@ -1,16 +1,19 @@
 <script lang="ts" setup>
 import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
-import { CartItem } from "@/types/common";
+import { CartItem, Cart } from "@/types/common";
 
 const userStore = useUserStore();
+const cartStore = useCartStore();
 
-const removeItem = (item: CartItem) => {
-  userStore.removeItem(item);
+const removeItem = (item: CartItem, cart: Cart) => {
+  userStore.removeItem( { cartId: cart.cartId, item } );
 };
+
 </script>
+
 <template>
-  <h1>Carrito de copra</h1>
+  <h1>Carrito de compra</h1>
   <br />
   <div>
     <button
@@ -21,6 +24,7 @@ const removeItem = (item: CartItem) => {
     >
       Deshacer
     </button>
+
     <table class="table">
       <thead>
         <tr>
@@ -29,13 +33,14 @@ const removeItem = (item: CartItem) => {
           <th scope="col">Remover</th>
         </tr>
       </thead>
-      <tbody v-for="item in userStore.selectedItems ?? {}">
-        <tr>
+
+      <tbody v-for="(cart, cartId) in userStore.carts" :key="cartId">
+        <tr v-for="item in cart.selectedItems" :key="item.nombre">
           <td>{{ item.nombre }}</td>
           <td>{{ item.precio }}</td>
           <td>
             <button
-              @click="removeItem(item)"
+              @click="removeItem(item, cart)"
               type="button"
               class="btn btn-dark"
             >

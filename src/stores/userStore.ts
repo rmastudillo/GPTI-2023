@@ -1,44 +1,75 @@
 import { CartItem } from "@/types/common";
 import { defineStore } from "pinia";
 
-interface State {
+interface Cart {
+  cartId: string;
   selectedItems: CartItem[];
+}
+
+interface State {
+  carts: Cart[];
   deletedItems: CartItem[];
 }
 
 export const useUserStore = defineStore({
   id: "userStore",
   state: (): State => ({
-    selectedItems: [],
+    carts: [],
     deletedItems: [],
   }),
   getters: {
-    getItemCount(state: State): number {
-      return state.selectedItems.length;
+    getCartItemCount(state: State): (cartId: string) => number {
+      return (cartId: string) => {
+        const cart = state.carts.find((cart) => cart.cartId === cartId);
+        return cart ? cart.selectedItems.length : 0;
+      };
     },
-    canUndo(state: State): Boolean {
-      return state.deletedItems.length ? true : false;
+    canUndo(state: State): boolean {
+      return state.deletedItems.length > 0;
     },
   },
   actions: {
-    addToCart(item: CartItem) {
+    addToCart(payload: { cartId: string; item: CartItem }) {
+      const { cartId, item } = payload;
       this.deletedItems = [];
-      this.selectedItems.push(item);
+      const cart = this.getOrCreateCart(cartId);
+      cart.selectedItems.push(item);
     },
-    removeItem(item: CartItem) {
-      const index = this.selectedItems.indexOf(item);
-      if (index !== -1) {
-        const removedItem = this.selectedItems.splice(index, 1)[0];
-        this.deletedItems.push(removedItem);
+    removeItem(payload: { cartId: string; item: CartItem }) {
+      const { cartId, item } = payload;
+      const cart = this.getCart(cartId);
+      if (cart) {
+        const index = cart.selectedItems.indexOf(item);
+        if (index !== -1) {
+          const removedItem = cart.selectedItems.splice(index, 1)[0];
+          this.deletedItems.push(removedItem);
+        }
       }
     },
     undoRemove() {
-      if (this.deletedItems.length > 0) {
-        const lastDeletedItem = this.deletedItems.pop();
+      const cartWithLastDeletedItem = this.carts.find(
+        (cart) => cart.selectedItems.length > 0
+      );
+      if (cartWithLastDeletedItem) {
+        const lastDeletedItem = cartWithLastDeletedItem.selectedItems.pop();
         if (lastDeletedItem) {
-          this.selectedItems.push(lastDeletedItem);
+          this.deletedItems.push(lastDeletedItem);
         }
       }
+    },
+    getOrCreateCart(cartId: string): Cart {
+      let cart = this.carts.find((cart) => cart.cartId === cartId);
+      if (!cart) {
+        cart = {
+          cartId,
+          selectedItems: [],
+        };
+        this.carts.push(cart);
+      }
+      return cart;
+    },
+    getCart(cartId: string): Cart | undefined {
+      return this.carts.find((cart) => cart.cartId === cartId);
     },
   },
   persist: true,

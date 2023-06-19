@@ -15,8 +15,6 @@ const addToCart = (item: any) => {
 };
 </script>
 <template>
-  <h1>Ejemplo Scrapper Productos Jumbo (Categoria Carne)</h1>
-  <br />
   <div>
     <div class="loading-message" v-if="cartStore.loading">
       <div class="spinner-border" role="status"></div>

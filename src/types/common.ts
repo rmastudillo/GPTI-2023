@@ -23,3 +23,8 @@ export interface CartItem {
   supermercado: string;
 }
 
+export interface Cart { 
+  cartId: string;
+  selectedItems: CartItem[];
+}
+
