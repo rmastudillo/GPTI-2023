@@ -2,6 +2,7 @@ import { CartItem } from "@/types/common";
 import { defineStore } from "pinia";
 
 interface State {
+  budget: number;
   selectedItems: CartItem[];
   deletedItems: CartItem[];
 }
@@ -9,6 +10,7 @@ interface State {
 export const useUserStore = defineStore({
   id: "userStore",
   state: (): State => ({
+    budget: 0,
     selectedItems: [],
     deletedItems: [],
   }),
@@ -21,9 +23,16 @@ export const useUserStore = defineStore({
     },
   },
   actions: {
+    setBudget(budget: number) {
+      this.budget = budget;
+    },
     addToCart(item: CartItem) {
-      this.deletedItems = [];
-      this.selectedItems.push(item);
+      if (item.precio + this.selectedItems.reduce((total, item) => total + item.precio, 0) <= this.budget) {
+        this.deletedItems = [];
+        this.selectedItems.push(item);
+      } else {
+        alert('El presupuesto es insuficiente para añadir este producto');
+      }
     },
     removeItem(item: CartItem) {
       const index = this.selectedItems.indexOf(item);
