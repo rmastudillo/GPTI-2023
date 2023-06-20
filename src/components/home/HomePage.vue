@@ -13,20 +13,12 @@ onMounted(() => {
 
 const budget = ref(userStore.budget);
 
-const updateBudget = () => {
-  userStore.setBudget(budget.value);
-};
-
 const addToCart = (item: any) => {
   userStore.addToCart(item);
 };
 </script>
 <template>
   <h1>Productos</h1>
-  <div class="flex my-4 items-center">
-    <label for="budget" class="text-lg text-gray-700">Presupuesto (en CLP): </label>
-    <input type="number" id="budget" v-model="budget" @change="updateBudget" class="budget-input bg-white p-2 shadow-md focus:ring-2 focus:ring-indigo-600 transition-all w-52" />
-  </div>
   <div>
     <div class="loading-message" v-if="cartStore.loading">
       <div class="spinner-border" role="status"></div>
@@ -41,7 +33,6 @@ const addToCart = (item: any) => {
 </template>
 
 <style scoped>
-
 .budget-container {
   margin: 20px 0;
 }

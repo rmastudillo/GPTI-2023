@@ -36,3 +36,10 @@ export interface QueryParams {
 export interface BadgeStyle {
   [key: string]: string;
 }
+
+export interface Cart {
+  name: string;
+  items: CartItem[];
+  budget: number;
+  deletedItems: CartItem[];
+}
