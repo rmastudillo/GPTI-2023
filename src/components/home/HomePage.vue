@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import ProductCard from "../shared/ProductCard.vue";
 
 const cartStore = useCartStore();
@@ -10,13 +10,15 @@ const userStore = useUserStore();
 onMounted(() => {
   cartStore.getProducts();
 });
+
+const budget = ref(userStore.budget);
+
 const addToCart = (item: any) => {
   userStore.addToCart(item);
 };
 </script>
 <template>
   <h1>Productos</h1>
-  <br />
   <div>
     <div class="loading-message" v-if="cartStore.loading">
       <div class="spinner-border" role="status"></div>
@@ -31,34 +33,25 @@ const addToCart = (item: any) => {
 </template>
 
 <style scoped>
-.estasotraclase {
-  border: 4px solid rgb(0, 0, 0);
-  background-color: white;
-  color: rgb(0, 0, 0);
-  font-size: 16px;
-  cursor: pointer;
-}
-.loading-message {
-  animation: fade 1s infinite alternate;
-  display: flex;
+.budget-container {
+  margin: 20px 0;
 }
 
-@keyframes fade {
-  0% {
-    opacity: 0.4;
-  }
-  100% {
-    opacity: 1;
-  }
+.budget-input {
+  margin-left: 10px;
+  padding: 5px;
+  font-size: 1em;
 }
-.card img {
-  display: flex;
-  height: 15rem;
-  object-fit: contain;
-}
+
 .card {
-  display: flex;
-  flex-direction: column;
-  width: 18rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.card img {
+  max-width: 100%;
+  height: auto;
 }
 </style>

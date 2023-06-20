@@ -86,11 +86,11 @@ const selectSupermarket = (superMarket: string) => {
             class="form-control me-2"
             type="search"
             v-model="searchValue"
-            placeholder="Search"
+            placeholder="Buscar"
             aria-label="Search"
           />
           <button class="btn btn-outline-primary mr-2" type="submit">
-            Search
+            Buscar
           </button>
           <button
             class="btn btn-outline-secondary inline-flex align-items-center w-[15rem]"
@@ -109,7 +109,7 @@ const selectSupermarket = (superMarket: string) => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              Categorias
+              Menu
             </button>
 
             <div
@@ -224,16 +224,41 @@ const selectSupermarket = (superMarket: string) => {
           </div>
         </div>
       </div>
-      <router-link :to="{ name: 'Cart' }">
-        <button type="button" class="btn btn-dark">
-          <span
-            class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger"
+      <div class="flex flex-row gap-1">
+        <div class="btn-group h-fit">
+          <button
+            type="button"
+            class="btn btn-info dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
           >
-            {{ userStore.getItemCount }}
-          </span>
-          <i class="bi bi-cart"></i>
-        </button>
-      </router-link>
+            {{ userStore.selectedCart.name }}
+          </button>
+          <ul class="dropdown-menu">
+            <li
+              v-for="cart in userStore.carts"
+              class="dropdown-item cursor-pointer"
+              @click="userStore.setNewCart(cart)"
+            >
+              <span class="cursor-pointer" @click="userStore.setNewCart(cart)">
+                {{ cart.name }}
+              </span>
+            </li>
+          </ul>
+        </div>
+        <router-link :to="{ name: 'Cart' }">
+          <div class="h-0">
+            <span
+              class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            >
+              {{ userStore.getItemCount }}
+            </span>
+          </div>
+          <button type="button" class="btn btn-dark h-fit">
+            <i class="bi bi-cart"></i>
+          </button>
+        </router-link>
+      </div>
     </nav>
   </div>
 </template>

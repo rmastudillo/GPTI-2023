@@ -1,49 +1,186 @@
 <script lang="ts" setup>
-import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
-import { CartItem } from "@/types/common";
+import { Cart, CartItem } from "@/types/common";
+import formatearPrecio from "@/utils/formatPrice";
+import { computed, ref } from "vue";
 
 const userStore = useUserStore();
+
+const newCartName = ref("");
 
 const removeItem = (item: CartItem) => {
   userStore.removeItem(item);
 };
+
+const remainingBudget = computed(() => {
+  return userStore.budget - userStore.getExpenses;
+});
+
+userStore.setUserBudget(100000);
+const canAddCart = ref(false);
+
+const addNewCart = () => {
+  const newCart = {
+    name: newCartName.value,
+    items: [],
+    budget: 0,
+    deletedItems: [],
+  } as Cart;
+  userStore.addCart(newCart);
+  newCartName.value = "";
+  canAddCart.value = false;
+};
 </script>
 <template>
-  <h1>Carrito de copra</h1>
-  <br />
-  <div>
+  <section class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2">
+      <button
+        @click="() => (canAddCart = !canAddCart)"
+        class="btn btn-primary w-fit"
+      >
+        Agregar un nuevo carrito
+      </button>
+      <div
+        :hidden="!canAddCart"
+        class="flex flex-row justify-start gap-2 align-items-center"
+      >
+        <span class="inline-block w-fit"> Nombre: </span>
+        <div class="w-[20rem] flex flex-row gap-2">
+          <input
+            class="form-control w-1"
+            type="text"
+            v-model="newCartName"
+            placeholder="Ingresa un nombre"
+          />
+          <button @click="addNewCart" class="btn btn-primary w-fit">
+            Agregar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="inline-flex gap-2 align-items-center">
+      <h1>Carrito de compra</h1>
+
+      <div class="flex flex-row gap-1">
+        <div class="w-fit">
+          <button
+            type="button"
+            class="btn btn-info dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ userStore.selectedCart.name }}
+          </button>
+          <ul class="dropdown-menu">
+            <li
+              v-for="cart in userStore.carts"
+              class="dropdown-item cursor-pointer"
+              @click="userStore.setNewCart(cart)"
+            >
+              <span class="cursor-pointer" @click="userStore.setNewCart(cart)">
+                {{ cart.name }}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-row flex-nowrap gap-2 align-items-center">
+      Presupuesto Total: $
+      <div class="w-[10rem]">
+        <input
+          type="number"
+          :min="0"
+          class="form-control"
+          v-model="userStore.budget"
+        />
+      </div>
+    </div>
+    <div>
+      Precio total carrito:
+
+      <span class="budget">{{ formatearPrecio(userStore.getExpenses) }}</span>
+    </div>
+    <div>
+      Presupuesto restante:
+      <span :class="`budget ${remainingBudget > 0 ? ' ' : 'bg-red-400'}`"
+        >{{ formatearPrecio(remainingBudget) }}
+      </span>
+    </div>
+  </section>
+  <div
+    :class="`flex flex-row w-full  ${
+      !userStore.canUndo ? 'justify-end' : 'justify-between'
+    }`"
+  >
     <button
       @click="userStore.undoRemove()"
       type="button"
       class="btn btn-dark"
-      :disabled="!userStore.canUndo"
+      :hidden="!userStore.canUndo"
     >
       Deshacer
     </button>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Nombre</th>
-          <th scope="col">Precio</th>
-          <th scope="col">Remover</th>
-        </tr>
-      </thead>
-      <tbody v-for="item in userStore.selectedItems ?? {}">
-        <tr>
-          <td>{{ item.nombre }}</td>
-          <td>{{ item.precio }}</td>
-          <td>
-            <button
-              @click="removeItem(item)"
-              type="button"
-              class="btn btn-dark"
-            >
-              -
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <button
+      v-if="userStore.carts.length > 1"
+      @click="
+        userStore.removeCart(userStore.selectedCart),
+          userStore.setNewCart(userStore.carts[0])
+      "
+      class="btn btn-danger w-fit"
+    >
+      Eliminar carrito
+    </button>
   </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Precio</th>
+        <th scope="col">Remover</th>
+      </tr>
+    </thead>
+    <tbody v-for="item in userStore.selectedCart.items">
+      <tr>
+        <td>{{ item.nombre }}</td>
+        <td>{{ item.precio }}</td>
+        <td>
+          <button @click="removeItem(item)" type="button" class="btn btn-dark">
+            -
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
+<style scoped>
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.budget {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: blue;
+  color: white;
+}
+</style>
