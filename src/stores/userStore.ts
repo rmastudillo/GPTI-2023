@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 
 interface State {
   carts: Cart[];
-  selectedCart: Cart;
+  selectedCartName: string;
   budget: number;
   slectedCartOptimizedByBudget: Cart[];
 }
@@ -26,34 +26,43 @@ export const useUserStore = defineStore({
         deletedItems: [],
       } as Cart,
     ],
-    selectedCart: defaultCart,
+    selectedCartName: defaultCart.name,
     budget: 0 /* budge 0 es budged infinito */,
     slectedCartOptimizedByBudget: [],
   }),
   getters: {
+    getSelectedCart(state: State): Cart {
+      return state.carts.find(
+        (cart) => cart.name === state.selectedCartName
+      ) as Cart;
+    },
     getItemCount(state: State): number {
-      return state.selectedCart.items.length;
+      return this.getSelectedCart.items.length;
     },
     canUndo(state: State): Boolean {
-      return state.selectedCart.deletedItems.length ? true : false;
+      return this.getSelectedCart.deletedItems.length ? true : false;
     },
     getExpenses(state: State): number {
       let expenses = 0;
-      state.selectedCart.items.map((item) => {
+      this.getSelectedCart.items.map((item) => {
         expenses += item.precio;
       });
       return expenses;
     },
+    getCart: (state: State) => (cartName: string) => {
+      const cart = state.carts.find((cart) => cart.name === cartName);
+      return cart ?? state.carts[0];
+    },
   },
   actions: {
     setNewCart(cart: Cart) {
-      this.selectedCart = cart;
+      this.selectedCartName = cart.name;
     },
     setUserBudget(budget: number) {
       this.budget = budget;
     },
     addToCart(item: CartItem) {
-      this.selectedCart.items.push(item);
+      this.getSelectedCart.items.push(item);
     },
     addCart(cart: Cart) {
       this.carts.push(cart);
@@ -63,19 +72,20 @@ export const useUserStore = defineStore({
       if (index !== -1) {
         this.carts.splice(index, 1);
       }
+      this.selectedCartName = this.carts[0].name;
     },
     removeItem(item: CartItem) {
-      const index = this.selectedCart.items.indexOf(item);
+      const index = this.getSelectedCart.items.indexOf(item);
       if (index !== -1) {
-        const removedItem = this.selectedCart.items.splice(index, 1)[0];
-        this.selectedCart.deletedItems.push(removedItem);
+        const removedItem = this.getSelectedCart.items.splice(index, 1)[0];
+        this.getSelectedCart.deletedItems.push(removedItem);
       }
     },
     undoRemove() {
-      if (this.selectedCart.deletedItems.length > 0) {
-        const lastDeletedItem = this.selectedCart.deletedItems.pop();
+      if (this.getSelectedCart.deletedItems.length > 0) {
+        const lastDeletedItem = this.getSelectedCart.deletedItems.pop();
         if (lastDeletedItem) {
-          this.selectedCart.items.push(lastDeletedItem);
+          this.getSelectedCart.items.push(lastDeletedItem);
         }
       }
     },

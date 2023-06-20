@@ -232,7 +232,7 @@ const selectSupermarket = (superMarket: string) => {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            {{ userStore.selectedCart.name }}
+            {{ userStore.getSelectedCart.name }}
           </button>
           <ul class="dropdown-menu">
             <li
