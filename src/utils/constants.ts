@@ -71,5 +71,6 @@ export const superMarket = ["jumbo", "lider", "santa isabel"];
 export const badgeStyle = {
   jumbo: "bg-lime-500",
   lider: "bg-blue-500",
+  unimarc: "bg-red-300",
   "santa isabel": "bg-red-500",
 } as BadgeStyle;

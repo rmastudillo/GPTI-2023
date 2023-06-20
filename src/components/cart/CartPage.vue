@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useUserStore } from "@/stores/userStore";
 import { Cart, CartItem } from "@/types/common";
+import { badgeStyle } from "@/utils/constants";
 import formatearPrecio from "@/utils/formatPrice";
 import { computed, ref } from "vue";
 
@@ -16,7 +17,6 @@ const remainingBudget = computed(() => {
   return userStore.budget - userStore.getExpenses;
 });
 
-userStore.setUserBudget(100000);
 const canAddCart = ref(false);
 
 const addNewCart = () => {
@@ -30,6 +30,25 @@ const addNewCart = () => {
   newCartName.value = "";
   canAddCart.value = false;
 };
+
+const primerCarrito = ref(userStore.carts[0]);
+const segundoCarrito = ref(
+  userStore.carts.length > 1 ? userStore.carts[1] : userStore.carts[0]
+);
+const getPrimerCarritoExpenses = computed(() => {
+  let expenses = 0;
+  primerCarrito.value.items.map((item) => {
+    expenses += item.precio;
+  });
+  return expenses;
+});
+const getSegundoCarritoExpenses = computed(() => {
+  let expenses = 0;
+  segundoCarrito.value.items.map((item) => {
+    expenses += item.precio;
+  });
+  return expenses;
+});
 </script>
 <template>
   <section class="flex flex-col gap-2">
@@ -69,7 +88,7 @@ const addNewCart = () => {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            {{ userStore.selectedCart.name }}
+            {{ userStore.getSelectedCart?.name }}
           </button>
           <ul class="dropdown-menu">
             <li
@@ -108,50 +127,195 @@ const addNewCart = () => {
       </span>
     </div>
   </section>
-  <div
-    :class="`flex flex-row w-full  ${
-      !userStore.canUndo ? 'justify-end' : 'justify-between'
-    }`"
-  >
-    <button
-      @click="userStore.undoRemove()"
-      type="button"
-      class="btn btn-dark"
-      :hidden="!userStore.canUndo"
+  <section>
+    <div
+      :class="`flex flex-row w-full  ${
+        !userStore.canUndo ? 'justify-end' : 'justify-between'
+      }`"
     >
-      Deshacer
-    </button>
-    <button
-      v-if="userStore.carts.length > 1"
-      @click="
-        userStore.removeCart(userStore.selectedCart),
-          userStore.setNewCart(userStore.carts[0])
-      "
-      class="btn btn-danger w-fit"
-    >
-      Eliminar carrito
-    </button>
-  </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Nombre</th>
-        <th scope="col">Precio</th>
-        <th scope="col">Remover</th>
-      </tr>
-    </thead>
-    <tbody v-for="item in userStore.selectedCart.items">
-      <tr>
-        <td>{{ item.nombre }}</td>
-        <td>{{ item.precio }}</td>
-        <td>
-          <button @click="removeItem(item)" type="button" class="btn btn-dark">
-            -
+      <button
+        @click="userStore.undoRemove()"
+        type="button"
+        class="btn btn-dark"
+        :hidden="!userStore.canUndo"
+      >
+        Deshacer
+      </button>
+      <button
+        v-if="userStore.carts.length > 1"
+        @click="
+          userStore.removeCart(userStore.getSelectedCart),
+            userStore.setNewCart(userStore.carts[0])
+        "
+        class="btn btn-danger w-fit"
+      >
+        Eliminar carrito
+      </button>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Supermercado</th>
+          <th scope="col">Precio</th>
+          <th scope="col">Remover</th>
+        </tr>
+      </thead>
+      <tbody v-for="item in userStore.getSelectedCart.items">
+        <tr>
+          <td>{{ item.nombre }}</td>
+          <td>
+            <span :class="`badge ${badgeStyle[item.supermercado]}`">
+              {{ item.supermercado }}
+            </span>
+          </td>
+          <td>{{ item.precio }}</td>
+          <td>
+            <button
+              @click="removeItem(item)"
+              type="button"
+              class="btn btn-dark"
+            >
+              -
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <hr />
+  <section>
+    <h2>Comparación:</h2>
+    <div class="flex flex-row flex-nowrap gap-4">
+      <div class="flex flex-col gap-1 w-1/2">
+        <div class="w-fit">
+          <button
+            type="button"
+            class="btn btn-info dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ primerCarrito.name }}
           </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <ul class="dropdown-menu">
+            <li
+              v-for="cart in userStore.carts"
+              class="dropdown-item cursor-pointer"
+              @click="() => (primerCarrito = cart)"
+            >
+              <span
+                class="cursor-pointer"
+                @click="() => (primerCarrito = cart)"
+              >
+                {{ cart.name }}
+              </span>
+            </li>
+          </ul>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Supermercado</th>
+              <th scope="col">Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in userStore.getCart(primerCarrito.name)!.items">
+              <td>{{ item.nombre }}</td>
+              <td>
+                <span :class="`badge ${badgeStyle[item.supermercado]}`">
+                  {{ item.supermercado }}
+                </span>
+              </td>
+              <td>{{ item.precio }}</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Total:</td>
+              <td></td>
+              <td class="font-bold">{{ getPrimerCarritoExpenses }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex flex-col gap-1 w-1/2">
+        <div class="w-fit">
+          <button
+            type="button"
+            class="btn btn-info dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ segundoCarrito.name }}
+          </button>
+          <ul class="dropdown-menu">
+            <li
+              v-for="cart in userStore.carts"
+              class="dropdown-item cursor-pointer"
+              @click="() => (segundoCarrito = cart)"
+            >
+              <span
+                class="cursor-pointer"
+                @click="() => (segundoCarrito = cart)"
+              >
+                {{ cart.name }}
+              </span>
+            </li>
+          </ul>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Supermercado</th>
+              <th scope="col">Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in userStore.getCart(segundoCarrito.name)!.items">
+              <td>{{ item.nombre }}</td>
+              <td>
+                <span :class="`badge ${badgeStyle[item.supermercado]}`">
+                  {{ item.supermercado }}
+                </span>
+              </td>
+              <td>{{ item.precio }}</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Total:</td>
+              <td class="b-0"></td>
+              <td class="font-bold">{{ getSegundoCarritoExpenses }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <h5 v-if="getPrimerCarritoExpenses != getSegundoCarritoExpenses">
+      Tu carrito "{{
+        getPrimerCarritoExpenses - getSegundoCarritoExpenses > 0
+          ? `${primerCarrito.name}`
+          : `${segundoCarrito.name}`
+      }}" es
+      {{
+        getPrimerCarritoExpenses - getSegundoCarritoExpenses > 0
+          ? `${formatearPrecio(
+              getPrimerCarritoExpenses - getSegundoCarritoExpenses
+            )}`
+          : `${formatearPrecio(
+              getSegundoCarritoExpenses - getPrimerCarritoExpenses
+            )}`
+      }}
+      más barato que "{{
+        getPrimerCarritoExpenses - getSegundoCarritoExpenses > 0
+          ? `${segundoCarrito.name}`
+          : `${primerCarrito.name}`
+      }}"
+    </h5>
+    <h5 v-else>
+      Ambos carritos tienen el mismo precio:
+      {{ formatearPrecio(getPrimerCarritoExpenses) }}
+    </h5>
+  </section>
 </template>
 <style scoped>
 .container {
@@ -180,7 +344,7 @@ table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: blue;
+  background-color: rgb(118, 118, 232);
   color: white;
 }
 </style>
