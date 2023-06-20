@@ -225,7 +225,7 @@ const selectSupermarket = (superMarket: string) => {
         </div>
       </div>
       <div class="flex flex-row gap-1">
-        <div class="btn-group">
+        <div class="btn-group h-fit">
           <button
             type="button"
             class="btn btn-info dropdown-toggle"
@@ -247,12 +247,14 @@ const selectSupermarket = (superMarket: string) => {
           </ul>
         </div>
         <router-link :to="{ name: 'Cart' }">
-          <button type="button" class="btn btn-dark">
+          <div class="h-0">
             <span
               class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger"
             >
               {{ userStore.getItemCount }}
             </span>
+          </div>
+          <button type="button" class="btn btn-dark h-fit">
             <i class="bi bi-cart"></i>
           </button>
         </router-link>
