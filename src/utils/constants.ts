@@ -1,8 +1,8 @@
 import { BadgeStyle, Categorias } from "@/types/common";
 
 export const API_HOST =
-  // import.meta.env.VITE_API_HOST_URL ?? "https://gpti-backend.onrender.com";
-  import.meta.env.VITE_API_HOST_URL ?? "http://localhost:8000";
+  import.meta.env.VITE_API_HOST_URL ?? "https://gpti-backend.onrender.com";
+  // import.meta.env.VITE_API_HOST_URL ?? "http://localhost:8000";
 // Aquí va la url del backend, o del apihost,n este caso por defecto es localhost:8000
 
 export const categorias = {
@@ -46,7 +46,7 @@ export const categorias = {
   ],
   mascotas: ["perros", "gatos", "otras-mascotas"],
   supermercado: [
-    "bebe",
+    "mi-bebe",
     "congelados",
     "desayuno-y-dulces",
     "belleza-y-cuidado-personal",
