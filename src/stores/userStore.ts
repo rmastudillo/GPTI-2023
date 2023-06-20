@@ -51,8 +51,7 @@ export const useUserStore = defineStore({
     },
     getCart: (state: State) => (cartName: string) => {
       const cart = state.carts.find((cart) => cart.name === cartName);
-
-      return cart;
+      return cart ?? state.carts[0];
     },
   },
   actions: {
@@ -73,6 +72,7 @@ export const useUserStore = defineStore({
       if (index !== -1) {
         this.carts.splice(index, 1);
       }
+      this.selectedCartName = this.carts[0].name;
     },
     removeItem(item: CartItem) {
       const index = this.getSelectedCart.items.indexOf(item);

@@ -49,6 +49,18 @@ const getSegundoCarritoExpenses = computed(() => {
   });
   return expenses;
 });
+
+const handleRemove = () => {
+  const selectedCartName = userStore.getSelectedCart.name;
+  userStore.removeCart(userStore.getSelectedCart);
+  userStore.setNewCart(userStore.carts[0]);
+  if (primerCarrito.value.name === selectedCartName) {
+    primerCarrito.value = userStore.carts[0];
+  }
+  if (segundoCarrito.value.name === selectedCartName) {
+    segundoCarrito.value = userStore.carts[0];
+  }
+};
 </script>
 <template>
   <section class="flex flex-col gap-2">
@@ -143,10 +155,7 @@ const getSegundoCarritoExpenses = computed(() => {
       </button>
       <button
         v-if="userStore.carts.length > 1"
-        @click="
-          userStore.removeCart(userStore.getSelectedCart),
-            userStore.setNewCart(userStore.carts[0])
-        "
+        @click="handleRemove"
         class="btn btn-danger w-fit"
       >
         Eliminar carrito
@@ -221,7 +230,7 @@ const getSegundoCarritoExpenses = computed(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in userStore.getCart(primerCarrito.name)!.items">
+            <tr v-for="item in userStore.getCart(primerCarrito.name).items">
               <td>{{ item.nombre }}</td>
               <td>
                 <span :class="`badge ${badgeStyle[item.supermercado]}`">
@@ -272,7 +281,7 @@ const getSegundoCarritoExpenses = computed(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in userStore.getCart(segundoCarrito.name)!.items">
+            <tr v-for="item in userStore.getCart(segundoCarrito.name).items">
               <td>{{ item.nombre }}</td>
               <td>
                 <span :class="`badge ${badgeStyle[item.supermercado]}`">
