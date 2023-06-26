@@ -25,7 +25,7 @@ const addToCart = (item: any) => {
       <h3 class="mx-2">Loading...</h3>
     </div>
     <div v-else class="flex flex-wrap gap-5">
-      <div v-for="(item, index) in cartStore.items.slice(0, 50)" class="flex">
+      <div v-for="(item, index) in cartStore.items" class="flex">
         <ProductCard :item="item" @addToCart="(item:any) => addToCart(item)" />
       </div>
     </div>

@@ -47,7 +47,7 @@ const paramsToString = (params: any) => {
     </div>
     <div v-else class="flex flex-wrap gap-5">
       <div
-        v-for="(item, index) in cartStore.filteredItems.slice(0, 50)"
+        v-for="(item, index) in cartStore.filteredItems"
         class="flex"
       >
         <ProductCard :item="item" @addToCart="(item:any) => addToCart(item)" />
