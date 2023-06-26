@@ -2,6 +2,7 @@
 import { CartItem } from "@/types/common";
 import { badgeStyle } from "@/utils/constants";
 import formatPrice from "@/utils/formatPrice";
+import { ref } from "vue";
 
 defineProps({
   item: {
@@ -10,11 +11,16 @@ defineProps({
   },
 });
 
+const isAnimating = ref(false);
 const emit = defineEmits(["addToCart"]);
 
 const addToCart = (item: any) => {
+  isAnimating.value = true;
   // Emitir el evento addToCart con el objeto item como argumento
   emit("addToCart", item);
+  setTimeout(() => {
+    isAnimating.value = false;
+  }, 300);
 };
 </script>
 
@@ -27,9 +33,30 @@ const addToCart = (item: any) => {
       <p :class="`card-text badge ${badgeStyle[item.supermercado]} w-fit`">
         {{ item.supermercado }}
       </p>
-      <div class="btn btn-primary" @click="addToCart(item)">
+      <div
+        :class="{ 'btn-animating': isAnimating }"
+        class="btn btn-primary"
+        @click="addToCart(item)"
+      >
         Agregar al carrito
       </div>
     </div>
   </div>
 </template>
+<style scoped>
+.btn-animating {
+  animation: buttonAnimation 0.3s;
+}
+
+@keyframes buttonAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+</style>
