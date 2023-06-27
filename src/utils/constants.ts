@@ -29,7 +29,7 @@ export const categorias = {
   ],
   "frutas-y-verduras": ["frutas", "verduras", "frutos-secos-y-semillas"],
   carniceria: ["vacuno", "cerdo", "pollo", "pavo", "cordero"],
-  botilleria: [
+  "bebidas-aguas-y-jugos": [
     "bebidas-gaseosas",
     "aguas-minerales",
     "jugos",
@@ -45,7 +45,7 @@ export const categorias = {
     "accesorios-de-limpieza",
   ],
   mascotas: ["perros", "gatos", "otras-mascotas"],
-  supermercado: [
+  "": [
     "mi-bebe",
     "congelados",
     "desayuno-y-dulces",
