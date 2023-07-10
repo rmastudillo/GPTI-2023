@@ -5,5 +5,8 @@ export const client = axios.create({
   baseURL: API_HOST,
   headers: {
     "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Origin, Content-Type, Accept",
   },
 });
