@@ -10,3 +10,4 @@ export const client = axios.create({
     "Access-Control-Allow-Headers": "Origin, Content-Type, Accept",
   },
 });
+
